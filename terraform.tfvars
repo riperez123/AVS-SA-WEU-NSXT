@@ -1,5 +1,5 @@
-nsx_manager = "10.34.0.3"
+nsx_manager = "NSX Manager IP address"
 
 nsx_username = "admin"
 
-nsx_password = "9Uae#s19M&o5"
+nsx_password = "super_secret"
