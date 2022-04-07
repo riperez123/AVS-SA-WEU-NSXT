@@ -37,6 +37,8 @@ data "nsxt_policy_service" "icmp" {
   display_name = "ICMPv4"
 }
 
+# The below two resources creates the DHCP servers
+
 resource "nsxt_policy_dhcp_server" "ARC_DHCP" {
   display_name      = "Azure-ARC-DHCP"
   description       = "Azure Arc DHCP Server"
@@ -53,6 +55,8 @@ resource "nsxt_policy_dhcp_server" "CDS_DHCP" {
   server_addresses  = ["10.130.20.2/24"]
 }
 
+# The below section creates the segements, maps them to their respective T1 routers and DHCP servers 
+
 resource "nsxt_policy_segment" "AVSTeam" {
   display_name        = "AVS-Team-Network"
   description         = "AVS-Team-Network"
@@ -66,9 +70,6 @@ resource "nsxt_policy_segment" "AVSTeam" {
 
 resource "nsxt_policy_segment" "AzureArc" {
   display_name = "Azure-ARC-Segment"
-  # depends_on = [
-  #   nsxt_policy_dhcp_server.ARC_DHCP
-  # ]
   description         = "Arc-Testing"
   connectivity_path   = data.nsxt_policy_tier1_gateway.tier1_router.path
   transport_zone_path = data.nsxt_policy_transport_zone.overlay_tz.path
@@ -76,7 +77,6 @@ resource "nsxt_policy_segment" "AzureArc" {
 
   subnet {
     cidr        = "10.130.250.1/24"
-    # dhcp_ranges = ["10.130.250.100-10.130.250.130"]
 
 
     dhcp_v4_config {
@@ -99,9 +99,6 @@ resource "nsxt_policy_segment" "Blue-Segment" {
 
 resource "nsxt_policy_segment" "CDSTesting" {
   display_name = "CDS-on-AVS-Segment"
-  # depends_on = [
-  #   nsxt_policy_dhcp_server.CDS_DHCP
-  # ]
   description         = "CDS Testing"
   connectivity_path   = data.nsxt_policy_tier1_gateway.tier1_gw.path
   transport_zone_path = data.nsxt_policy_transport_zone.overlay_tz.path
@@ -195,6 +192,8 @@ resource "nsxt_policy_segment" "Webbma-Dpools" {
     cidr = "10.118.8.129/26"
   }
 }
+
+# The below section creates the additional T1 routers in the SDDC
 
 data "nsxt_policy_tier0_gateway" "T0" {
   display_name = "TNT65-T0"
